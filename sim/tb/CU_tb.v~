@@ -1,0 +1,126 @@
+`timescale 1ns / 1ps
+
+`define POSTSYN
+
+`ifdef POSTSYN
+`include "../liberty/D_CELLS_3V/verilog/D_CELLS_3V.v"
+`include "../liberty/D_CELLS_3V/verilog/VLG_PRIMITIVES.v"
+`endif 
+
+module CU_tb();
+
+parameter instrFile  = "tb/instr_mem.txt"; 
+
+reg clk;
+reg rst;
+reg [31:0] fu_out;
+wire [31:0] instruction;
+wire [31:0] next_pc;
+wire [31:0] incr_pc;
+wire [4:0] funct_select;
+wire [4:0] rs1;
+wire [4:0] rs2;
+wire [4:0] rd;
+wire [31:0] immediate_out;
+wire MB_select;
+wire MD_select;
+wire MF_select;
+wire read_mem;
+wire write_mem;
+wire load_enable;
+wire PC_MUX;
+//
+reg [31:0] DIN_instr;
+reg dummy_clk;
+reg POR, HS, HR;
+wire RDY_instr;
+reg CE_instr,WE_instr;
+//
+parameter CLK_FREQ = 10e6;
+
+real CLK_PER = (1.0 / CLK_FREQ) * 1e9;
+
+reg SYS_RESET_DONE;
+
+CU CU_inst(
+    .clk(clk),
+    .rst(rst),
+    .fu_out(fu_out),
+    .instruction(instruction),
+    .next_pc(next_pc),
+    .incr_pc(incr_pc),
+    .funct_select(funct_select),
+    .rs1(rs1),
+    .rs2(rs2),
+    .rd(rd),
+    .immediate_out(immediate_out),
+    .MB_select(MB_select),
+    .MD_select(MD_select),
+    .MF_select(MF_select),
+    .read_mem(read_mem),
+    .write_mem(write_mem),
+    .load_enable(load_enable),
+    .PC_MUX(PC_MUX)
+    );
+NVR_TOP Instr_MEM(
+    .A(next_pc),
+    .DIN(DIN_instr),
+    .TM_NVCP(4'h0),
+    .CE(CE_instr),
+    .HR(HR),
+    .HS(HS),
+    .MEM_ALLC(1'b0),
+    .NVREF_EXT(1'b0), 
+    .PEIN(1'b0),
+    .POR(POR),
+    .WE(WE_instr),
+    .MEM_SEL(4'd0),
+    .DUP(1'b0),
+    .DSCLK(1'b0), 
+    .DRSTN(1'b1),
+    .DSI(1'b0), 
+    .DSO(),
+    .CLK4M(),
+    .DOUT(instruction),
+    .RDY(RDY_instr));
+    always #(CLK_PER/2) clk = ~clk;
+    initial begin
+	fu_out = 0;
+        clk = 0;
+        WE_instr = 0;
+        $timeformat(-6,6," us");
+	$readmemb(instrFile, Instr_MEM.XNVR._SR_MEMORY, 0, 127);
+	$display("%.1fns XNVR %m : INFO : Loading Initial Instr File ... %s \n", $realtime, instrFile);
+        sys_reset;
+	rst = 0;
+	#(CLK_PER*3/2);
+	rst = 1;
+	#10000;
+	$finish;
+    end
+
+    always @(posedge clk) begin
+        if(SYS_RESET_DONE == 1) begin
+            CE_instr = 1;
+            #(RDY_instr);
+            CE_instr = 0;
+        end
+    end
+    task sys_reset;
+	// Description: Apply a low-active reset pulse
+		begin
+			POR= 0;
+			rst = 1;
+			$display("Applying system reset at %t",$time);
+			#(CLK_PER);
+			POR = 1;
+			rst = 0;
+			#(CLK_PER);
+			POR = 0;
+			rst = 1;
+			#(CLK_PER);
+            		SYS_RESET_DONE = 1;
+		end
+	endtask
+endmodule
+

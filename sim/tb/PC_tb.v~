@@ -1,0 +1,70 @@
+`timescale 1ns / 1ps
+
+`define POSTSYN
+
+`ifdef POSTSYN
+`include "../liberty/D_CELLS_3V/verilog/D_CELLS_3V.v"
+`include "../liberty/D_CELLS_3V/verilog/VLG_PRIMITIVES.v"
+`endif 
+
+module PC_tb();
+parameter CLK_FREQ = 100e6;
+real CLK_PER = (1.0 / CLK_FREQ) * 1e9;
+    reg  clk;
+    reg  rst;
+    reg  [3:0] instruction;
+    reg  [31:0] fu_out;
+    reg  [31:0] instr_pc;
+    wire [31:0] next_pc;
+PC PC_inst(
+    .clk(clk),
+    .rst(rst),
+    .instruction(instruction),
+    .fu_out(fu_out),
+    .instr_pc(instr_pc),
+    .next_pc(next_pc)
+    );
+always #(CLK_PER/2) clk = ~clk;
+
+initial begin
+	clk = 0;
+	rst = 1;
+	#20;
+	rst = 0;
+	#20;
+	rst = 1;
+// 4'b0100, 4'b0101, 4'b0110, 4'b0111, 4'b1000, 4'b1001 
+	instruction  = 4'b0100;
+	instr_pc = 32'd12;
+	fu_out = 0;
+	#10;
+	fu_out = 1;
+	#10;
+	fu_out = 0;
+	#10;
+	instruction  = 4'b0101;
+	instr_pc = 32'd64;
+	#10;
+	fu_out = 1;
+	#10;
+	fu_out = 0;
+	#10;
+	fu_out = 1;
+	instruction = 4'b0000;
+	#10;
+	#10;
+	#10;
+	#10;
+	fu_out = 0;
+	#10;
+	#10;
+	fu_out = 238;
+	#10;
+	#10;
+	fu_out = 2399;
+	#10;
+	#10;
+	#3;
+	$finish;
+end
+endmodule

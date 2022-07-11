@@ -1,0 +1,63 @@
+`timescale 1ns / 1ps
+
+`define POSTSYN
+
+`ifdef POSTSYN
+`include "../liberty/D_CELLS_3V/verilog/D_CELLS_3V.v"
+`include "../liberty/D_CELLS_3V/verilog/VLG_PRIMITIVES.v"
+`endif 
+module ID_tb();
+reg [31:0] instruction;
+wire [4:0] funct_select;
+wire [4:0] rs1;
+wire [4:0] rs2;
+wire [4:0] rd;
+wire [31:0] immediate_out;
+wire MB_select;
+wire MD_select;
+wire MF_select;
+wire read_mem;
+wire write_mem;
+wire load_enable;
+
+ID ID_inst(
+    .instruction(instruction),
+    .funct_select(funct_select), 
+    .rs1(rs1),
+    .rs2(rs2),
+    .rd(rd),
+    .immediate_out(immediate_out),
+    .MB_select(MB_select),
+    .MD_select(MD_select),
+    .MF_select(MF_select),
+    .read_mem(read_mem),
+    .write_mem(write_mem),
+    .load_enable(load_enable)
+    );
+    initial begin
+        give_instruction(15,3,0,120,3'b001,7'b0110011,7'b0000000); // SLL
+        give_instruction(20,11,4,120,3'b011,7'b0110011,7'b0000000); // SLTU
+        give_instruction(2,3,4,5,0,7'b0110011,7'b0000000); // add
+        give_instruction(2,11,5,32'h0000FFA0,3'b000,7'b0010011,7'b0000000); // addI
+        give_instruction(1,2,3,32'h000000AF,3'b111,7'b0110011,7'b0000000); // andI
+        give_instruction(6,5,10,5,0,7'b0110011,7'b0100000); //sub
+        give_instruction(10,0,12,32'hFFFFFF00, 3'b000,7'b0000011,7'b0000000); //LB
+        give_instruction(10,0,12,32'hFFFFFF00, 3'b010,7'b0100011,7'b0000000); //SB
+        give_instruction(0,0,2,32'hFFFFF000, 3'b000,7'b0110111,7'b0000000); //LUI
+        give_instruction(3,5,0,32'hFFFFF000, 3'b000,7'b1100011,7'b0000000); //BEQ
+        $finish;
+    end
+    task give_instruction(input [4:0] r1,input [4:0] r2, input [4:0] rdest, input [31:0] imm, input [2:0] funct3, input [6:0] opcode,input [6:0] funct7); begin
+        case(opcode[6:2])
+        5'b01101,5'b00101 : instruction = {imm[31:12], rdest, opcode}; // U-type
+        5'b11011 : instruction = {imm[20],imm[10:1],imm[11],imm[19:12], rdest, opcode};// J-type
+        5'b11001,5'b00000,5'b00100 : instruction = {imm[11:0], r1, funct3,rdest, opcode};// I-type
+        5'b11000 : instruction = {imm[12], imm[10:5],r2,r1,funct3,imm[4:1],imm[11], opcode};// B-type
+        5'b01000 : instruction = {imm[11:5],r2,r1,funct3,imm[4:0], opcode};// S-type
+        default  : instruction = {funct7,r2,r1,funct3,rdest,opcode}; // R type
+        endcase
+        #10;
+    end
+      endtask
+endmodule
+

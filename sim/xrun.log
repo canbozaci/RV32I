@@ -1,0 +1,149 @@
+xrun(64): 19.03-s013: (c) Copyright 1995-2019 Cadence Design Systems, Inc.
+TOOL:	xrun(64)	19.03-s013: Started on Jun 20, 2022 at 13:27:19 EEST
+xrun
+	-access rwc
+	-gui
+	../src/ALU.v
+	../src/barrel_arith_shift.v
+	../src/barrel_shifter.v
+	../src/Core.v
+	../src/CU.v
+	../src/DECODER5to32.v
+	../src/FA.v
+	../src/Forward_unit.v
+	../src/FU.v
+	../src/HA.v
+	../src/Hazard_detect_unit.v
+	../src/ID.v
+	../src/MUX2to1.v
+	../src/MUX5to32.v
+	../src/PC.v
+	../src/RCA_nocin.v
+	../src/RCA.v
+	../src/REG_32bit.v
+	../src/REG_bit.v
+	../src/RegisterFile.v
+	../src/shifter.v
+	../src/SQRT_CSLA_ZFC.v
+	../src/ZFC.v
+	tb/Core_tb.v
+	tb/XCPF_128X32DP32_VD03C.v
+	tb/XNVR_128X32P32_VD01C.v
+	tb/XNVR_TOP.v
+	-s
+Recompiling... reason: file './tb/Core_tb.v' is newer than expected.
+	expected: Mon Jun 20 13:21:40 2022
+	actual:   Mon Jun 20 13:26:02 2022
+file: tb/Core_tb.v
+	module worklib.Core_tb:v
+		errors: 0, warnings: 0
+		Caching library 'worklib' ....... Done
+	Elaborating the design hierarchy:
+	Top level design units:
+		Core_tb
+       .fu_out(branch_true),
+                         |
+xmelab: *W,CUVMPW (../src/Core.v,139|25): port sizes differ in port connection (1/32).
+    .A(next_pc_div_4),
+                   |
+xmelab: *W,CUVMPW (./tb/Core_tb.v,49|19): port sizes differ in port connection (32/7).
+	.TRIM(TRIM), 
+	         |
+xmelab: *W,CUVMPW (./tb/XNVR_TOP.v,30|10): port sizes differ in port connection (16/32).
+	.MEM_SEL(MEM_SEL), 
+	               |
+xmelab: *W,CUVMPW (./tb/XNVR_TOP.v,58|16): port sizes differ in port connection (4/1).
+    .A(address_data),
+                  |
+xmelab: *W,CUVMPW (./tb/Core_tb.v,71|18): port sizes differ in port connection (32/7).
+	.TRIM(TRIM), 
+	         |
+xmelab: *W,CUVMPW (./tb/XNVR_TOP.v,30|10): port sizes differ in port connection (16/32).
+	.MEM_SEL(MEM_SEL), 
+	               |
+xmelab: *W,CUVMPW (./tb/XNVR_TOP.v,58|16): port sizes differ in port connection (4/1).
+	Building instance overlay tables: .................... Done
+	Generating native compiled code:
+		worklib.Core_tb:v <0x3e9ebd28>
+			streams:  21, words: 19569
+	Building instance specific data structures.
+	Loading native compiled code:     .................... Done
+	Design hierarchy summary:
+		                  Instances  Unique
+		Modules:               1184      28
+		Primitives:             164       4
+		Timing outputs:         126     111
+		Registers:             1239     158
+		Scalar wires:          1587       -
+		Expanded wires:         442      26
+		Vectored wires:         116       -
+		Always blocks:         1186      91
+		Initial blocks:           6       4
+		Cont. assignments:      143      73
+		Pseudo assignments:      65      61
+		Timing checks:          986     148
+		Simulation timescale:   1ps
+	Writing initial simulation snapshot: worklib.Core_tb:v
+xcelium> 
+xcelium> source /vlsi/apps/cadence/XCELIUM/19.03.013/tools/xcelium/files/xmsimrc
+xcelium> 
+-------------------------------------
+Relinquished control to SimVision...
+# Restoring simulation environment...
+xcelium> input -quiet .reinvoke.sim
+xcelium> file delete .reinvoke.sim
+xcelium> run
+0.0ns XNVR Core_tb.Instr_MEM.XNVR : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XNVR Core_tb.Instr_MEM.XNVR : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XCPF Core_tb.Instr_MEM.XCPF : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XCPF Core_tb.Instr_MEM.XCPF : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XNVR Core_tb.Data_MEM.XNVR : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XNVR Core_tb.Data_MEM.XNVR : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XCPF Core_tb.Data_MEM.XCPF : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XCPF Core_tb.Data_MEM.XCPF : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XNVR Core_tb : INFO : Loading Initial Instr File ... tb/instr_mem.txt 
+
+0.0ns XNVR Core_tb : INFO : Loading Initial Data File ... tb/data_mem.txt 
+
+Applying system reset at          0.000000 us
+0.0ns XNVR Core_tb.Data_MEM.XNVR : INFO : Switch Off Parallel Endurance Mode !
+0.0ns XNVR Core_tb.Instr_MEM.XNVR : INFO : Switch Off Parallel Endurance Mode !
+100.0ns XNVR Core_tb.Data_MEM.XNVR : INFO : Global Reset to FUNCTIONAL MODE ...
+100.0ns XNVR Core_tb.Instr_MEM.XNVR : INFO : Global Reset to FUNCTIONAL MODE ...
+Simulation complete via $finish(1) at time 39600 NS + 0
+./tb/Core_tb.v:120 		$finish;
+xcelium> probe -create -shm Core_tb.Core_inst.branch_dataA Core_tb.Core_inst.branch_dataB
+Created probe 2
+xcelium> reset
+Loaded snapshot worklib.Core_tb:v
+xcelium> run
+0.0ns XNVR Core_tb.Instr_MEM.XNVR : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XNVR Core_tb.Instr_MEM.XNVR : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XCPF Core_tb.Instr_MEM.XCPF : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XCPF Core_tb.Instr_MEM.XCPF : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XNVR Core_tb.Data_MEM.XNVR : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XNVR Core_tb.Data_MEM.XNVR : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XCPF Core_tb.Data_MEM.XCPF : WARNING : 	THIS IS A BEHAVIORAL MODEL WITH DEFAULT WORST CASE TIMING --->
+0.0ns XCPF Core_tb.Data_MEM.XCPF : WARNING : 	TO USE THE CORRECT TIMING PLEASE ANNOTATE SDF TIMING !!!
+
+0.0ns XNVR Core_tb : INFO : Loading Initial Instr File ... tb/instr_mem.txt 
+
+0.0ns XNVR Core_tb : INFO : Loading Initial Data File ... tb/data_mem.txt 
+
+Applying system reset at          0.000000 us
+0.0ns XNVR Core_tb.Data_MEM.XNVR : INFO : Switch Off Parallel Endurance Mode !
+0.0ns XNVR Core_tb.Instr_MEM.XNVR : INFO : Switch Off Parallel Endurance Mode !
+100.0ns XNVR Core_tb.Data_MEM.XNVR : INFO : Global Reset to FUNCTIONAL MODE ...
+100.0ns XNVR Core_tb.Instr_MEM.XNVR : INFO : Global Reset to FUNCTIONAL MODE ...
+Simulation complete via $finish(1) at time 39600 NS + 0
+./tb/Core_tb.v:120 		$finish;
+xcelium> ^C
+xcelium> exit
+TOOL:	xrun(64)	19.03-s013: Exiting on Jun 20, 2022 at 13:51:54 EEST  (total: 00:24:35)

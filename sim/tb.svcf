@@ -1,0 +1,697 @@
+# SimVision Command Script (Sun Jun 19 11:33:01 PM EEST 2022)
+#
+# Version 19.03.s013
+#
+# You can restore this configuration with:
+#
+#     simvision -input tb.svcf
+#  or simvision -input tb.svcf database1 database2 ...
+#
+
+
+#
+# Preferences
+#
+preferences set toolbar-Standard-WatchWindow {
+  usual
+  shown 0
+}
+preferences set plugin-enable-svdatabrowser-new 1
+preferences set toolbar-Windows-WatchWindow {
+  usual
+  shown 0
+}
+preferences set toolbar-sendToIndago-WaveWindow {
+  usual
+  position -pos 1
+}
+preferences set toolbar-Standard-Console {
+  usual
+  position -pos 1
+}
+preferences set toolbar-Search-Console {
+  usual
+  position -pos 2
+}
+preferences set plugin-enable-groupscope 0
+preferences set plugin-enable-interleaveandcompare 0
+preferences set plugin-enable-waveformfrequencyplot 0
+preferences set toolbar-SimControl-WatchWindow {
+  usual
+  shown 0
+}
+preferences set toolbar-TimeSearch-WatchWindow {
+  usual
+  shown 0
+}
+
+#
+# PPE data
+#
+array set dbNames ""
+set dbNames(realName1) [database require waves -hints {
+	file ./waves.shm/waves-1.trn
+	file /disks/projects/VLSI2Sp22/can_bozaci/HW8/Part5/sim/waves.shm/waves-1.trn
+}]
+
+#
+# Mnemonic Maps
+#
+mmap new  -reuse -name {Boolean as Logic} -radix %b -contents {{%c=FALSE -edgepriority 1 -shape low}
+{%c=TRUE -edgepriority 1 -shape high}}
+mmap new  -reuse -name {Example Map} -radix %x -contents {{%b=11???? -bgcolor orange -label REG:%x -linecolor yellow -shape bus}
+{%x=1F -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=2C -bgcolor red -label ERROR -linecolor white -shape EVENT}
+{%x=* -label %x -linecolor gray -shape bus}}
+
+#
+# Design Browser windows
+#
+if {[catch {window new WatchList -name "Design Browser 1" -geometry 730x500+716+106}] != ""} {
+    window geometry "Design Browser 1" 730x500+716+106
+}
+window target "Design Browser 1" on
+browser using {Design Browser 1}
+browser set -scope [subst  {$dbNames(realName1)::[format {Core_tb.Core_inst}]} ]
+browser set \
+    -signalsort name
+browser yview see [subst  {$dbNames(realName1)::[format {Core_tb.Core_inst}]} ]
+browser timecontrol set -lock 0
+
+#
+# Waveform windows
+#
+if {[catch {window new WaveWindow -name "Waveform 1" -geometry 1596x824+0+25}] != ""} {
+    window geometry "Waveform 1" 1596x824+0+25
+}
+window target "Waveform 1" on
+waveform using {Waveform 1}
+waveform sidebar visibility partial
+waveform set \
+    -primarycursor TimeA \
+    -signalnames name \
+    -signalwidth 193 \
+    -units ps \
+    -valuewidth 75
+waveform baseline set -time 0
+
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.clk}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.address_data[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.CE_data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.CE_instr}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.HR}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.HS}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.POR}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.RDY_data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.RDY_instr}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.SYS_RESET_DONE}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.WE_data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.WE_instr}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.address_data[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.instruction[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.next_pc[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.read_data[31:0]}]}
+	} ]]
+waveform format $id -radix %x
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.read_mem_data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.rst}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.write_data[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.write_mem_data}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -label CU -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.MB_select}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.MD_select}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.MF_select}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.PC_MUX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.branch_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.branch_out_reg}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.clk}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.fu_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.funct_select[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{[format {signed(%s::Core_tb.Core_inst.CU_inst.immediate_out)}  $dbNames(realName1)]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.instruction[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.jal_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.jal_out_reg}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.jalr_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.jalr_out_reg}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.load_enable}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.next_pc[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.rd[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.read_mem}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.rs1[4:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.rs2[4:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.rst}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.CU_inst.write_mem}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -label {Branch in ID} -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_instr}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_instr_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_instr_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_select_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_true_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_true}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.A_data_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.B_data_out[31:0]}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_select[4:0]}]}
+	} ]]
+set id [waveform add -label {Hazard Detection Unit} -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.hazard_detect_inst.rs2_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.hazard_detect_inst.rs1_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.hazard_detect_inst.read_mem_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.hazard_detect_inst.rd_ID_EX[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.hazard_detect_inst.load_use_hazard_out}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -label {Forwarding Unit} -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.ForwardA[1:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.ForwardB[1:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.load_enable_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.load_enable_MEM_WB}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.rd_EX_MEM[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.rd_MEM_WB[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.rs1_ID_EX[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Forward_unit_inst.rs2_ID_EX[4:0]}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -label FU -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.Z}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.alu_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.c}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.c_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.fu_in1[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.fu_in2[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.fu_out[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.funct_select[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.shamt[4:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.shift_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.shift_sel[1:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.FU_inst.unit_sel}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -label RegFile -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.A_data[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.A_select[4:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{[format {signed(%s::Core_tb.Core_inst.RegisterFile_inst.B_data)}  $dbNames(realName1)]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.B_select[4:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.D_addr[4:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.D_data[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.clk}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.data_out[1023:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.load_enable}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.load_enable_decoder_output[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.RegisterFile_inst.rst}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -cdivider divider]
+set id [waveform add -label {Data Mem} -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Data_MEM.A[6:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Data_MEM.CE}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Data_MEM.DOUT[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Data_MEM.DIN[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Data_MEM.RDY}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Data_MEM.WE}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -label Core -comment {}]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.data_MEM_WB[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.A_data_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.A_data_out_ID_EX[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.B_data_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.B_data_out_EX_MEM[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.B_data_out_ID_EX[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Bus_B[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MB_select}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MB_select_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MB_select_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MD_select}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MD_select_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MD_select_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MD_select_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MD_select_MEM_WB}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MF_select}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MF_select_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MF_select_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.MUX_PC_OUT[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.PC_MUX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.PC_MUX_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.PC_MUX_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.PC_MUX_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.PC_MUX_MEM_WB}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.Z}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.address_data[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_out_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_out_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.branch_out_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.c_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.clk}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.data_MEM_WB[31:0]}]}
+	} ]]
+waveform format $id -radix %d
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.fu_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.fu_out_EX_MEM[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.fu_out_MEM_WB[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.funct_select[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.funct_select_ID_EX[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.funct_select_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.immediate_out[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.immediate_out_EX_MEM[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.immediate_out_ID_EX[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.immediate_out_IF_ID[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.instruction[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jal_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jal_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jal_out_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jal_out_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jal_out_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jalr_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jalr_out}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jalr_out_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jalr_out_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.jalr_out_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.load_enable}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.load_enable_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.load_enable_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.load_enable_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.load_enable_MEM_WB}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.next_pc[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.next_pc_CU[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.next_pc_IF_ID[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.next_pc_ID_EX[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.next_pc_EX_MEM[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.next_pc_MEM_WB[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.clk}]}
+	} ]]
+set id [waveform add -cdivider divider]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rd[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rd_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rd_ID_EX[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rd_EX_MEM[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rd_MEM_WB[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_data[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_data_MEM_WB[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_mem}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_mem_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_mem_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_mem_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.read_mem_data}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rs1[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rs1_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rs2[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rs2_IF_ID[4:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.rst}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.write_data[31:0]}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.write_mem}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.write_mem_EX_MEM}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.write_mem_ID_EX}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.write_mem_IF_ID}]}
+	} ]]
+set id [waveform add -signals [subst  {
+	{$dbNames(realName1)::[format {Core_tb.Core_inst.write_mem_data}]}
+	} ]]
+set id [waveform add -cdivider divider]
+
+waveform xview limits 0 2000ps
+
+#
+# Waveform Window Links
+#
+
+#
+# Layout selection
+#
+
