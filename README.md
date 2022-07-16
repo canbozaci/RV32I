@@ -1,5 +1,5 @@
 # RV32I
-RISC-V 32I Core Codes written for university class
+RISC-V 32-bit Integer Core Codes written for university class
 
 We have designed 5-stage pipelined RISC-V Core. Core.v is the top level design for the Core. Memories are instantiated with the NVRAM modules synthesized in the Cadence. We used xfab_018 library for the process.
 
